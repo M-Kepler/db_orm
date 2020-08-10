@@ -39,14 +39,13 @@
 
 - 测试:
   ```sh
-  # 把测试文件 test/test_data.zip 解压到 /sf/db/dap/log_data/store/bbc/blob
+  把测试文件 test/test_data.zip 解压到 /sf/db/dap/log_data/store/bbc/blob
   mkdir -p /sf/db/dap/log_data/store/bbc/blob
 
-  # 执行单测文件
-  ## 如果需要把结果返回，则修改 test_orm.py/OUTPUT 为True
+  执行单测文件
+  如果需要把结果返回，则修改 test_orm.py/OUTPUT 为True
   python -m dap_orm.test.test_orm
   ```
-
 
 # DAP参考
 
