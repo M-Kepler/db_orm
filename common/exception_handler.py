@@ -1,7 +1,7 @@
 # -*-coding:utf-8-*-
 
-from logging import getLogger
-from bbc.lib.i18n.ui import gettext as _
+from .log import getLogger
+from ..i18n.ui import gettext as _
 from .exceptions import DapModelFieldsNotFound
 from .exceptions import DapModelFilterNotFound
 from .exceptions import DapQueryParamErr

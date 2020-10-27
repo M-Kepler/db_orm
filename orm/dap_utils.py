@@ -1,12 +1,14 @@
 # -*-coding:utf-8-*-
 
+import ast
 import json
 import uuid
 import requests
 
-from bbc.lib.log import getLogger
-from bbc.redis_tools.common import REDIS
-from bbc.redis_tools.common import PIPE
+from ..common.log import getLogger
+from ..common.globals import g
+# from bbc.redis_tools.common import REDIS
+# from bbc.redis_tools.common import PIPE
 from ..common.const import DapConfig
 from ..common.exceptions import GetOriginalDataFailed
 
@@ -82,12 +84,15 @@ class DapUtils(object):
         query_token = str(uuid.uuid4())
         LOG.debug(query_token)
         # 对查询到的数据先做排序，再存到redis中
-
+        # FIXME
+        g.query_cache[query_token] = dap_data
+        """
         for item in dap_data:
             score = item.get(sorted_by, 0)
             PIPE.zadd(query_token, score, item)
         PIPE.expire(query_token, DapConfig.REDIS_QUERY_RET_TTL)
         PIPE.execute()
+        """
         return query_token
 
     @classmethod
@@ -100,7 +105,15 @@ class DapUtils(object):
         :return
             返回该页的数据
         '''
+        query_return = g.query_cache.get(query_token)
+        start = (curr_page - 1) * page_size
+        end = curr_page * page_size - 1
+        dap_data = query_return[start:end]
+        """
         dap_data = REDIS.zrange(name=query_token,
                                 start=(curr_page - 1) * page_size,
                                 end=curr_page * page_size - 1)
-        return dap_data
+        """
+        # 存到 redis 中的json再取出来是这样的: '{u\'event_type\': u\'2\'}' ,没法直接json.loads(xx)
+        # 利用ast.literal_eval做解析json字符串
+        return [cls(**(ast.literal_eval(x))) for x in dap_data]

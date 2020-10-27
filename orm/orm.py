@@ -12,16 +12,16 @@ http://dap.pr.sangfor.org/index.php?s=/7&page_id=106
 import ast
 from operator import itemgetter
 
-from bbc.lib.log import getLogger
+from ..common.log import getLogger
 
 from .dap_utils import DapUtils
 from .fields import BaseField
 from ..common.const import DapConfig
 from ..common.const import SqlConfig
-from ..transformers.filters import BaseFilter
-from ..transformers.combiners import CountCombiner
-from ..transformers.combiners import SumCombiner
-from ..transformers.collectors import DateCollector
+from ..converters.filters import BaseFilter
+from ..converters.combiners import CountCombiner
+from ..converters.combiners import SumCombiner
+from ..converters.collectors import DateCollector
 
 from ..common.exceptions import DapModelFieldsNotFound
 from ..common.exceptions import DapModelFilterNotFound
@@ -474,8 +474,4 @@ class Model(dict):
 
         # 从缓存数据中进行切片
         dap_data = DapUtils.get_split_data(query_token, curr_page, page_size)
-
-        # 存到redis中的json再取出来是这样的: '{u\'event_type\': u\'2\'}' ,没法直接json.loads(xx)
-        # 利用ast.literal_eval做解析json字符串
-        query_data = [cls(**(ast.literal_eval(x))) for x in dap_data]
-        return query_data, len(query_ret)
+        return dap_data, len(query_ret)

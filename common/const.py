@@ -1,6 +1,11 @@
 # -*-coding:utf-8-*-
 
 
+class Config:
+    LOG_LEVEL = "debug"
+    LOG_ROOT_DIR = './log/today'
+
+
 class DapConfig:
     '''
         DAP 相关的配置
@@ -14,7 +19,8 @@ class DapConfig:
     DATE_FMT = '%Y%m%d'
 
     # DAP应用BBC的根路径
-    BBC_ROOT = '/sf/db/dap/log_data/store/bbc/'
+    # BBC_ROOT = '/sf/db/dap/log_data/store/bbc/'
+    BBC_ROOT = '/source/dap_orm/test/test_data'
 
     # DAP 日期通配符
     TABLE_REG = '[0-9]*'

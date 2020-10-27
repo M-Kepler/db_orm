@@ -8,7 +8,7 @@ from ..common.const import DapConfig
 from ..orm.orm import Model
 from ..orm.fields import IntegerField
 from ..orm.fields import StringField
-from ..transformers.filters import IncludeFilter, EqFilter
+from ..converters.filters import IncludeFilter, EqFilter
 from ..common.exceptions import DapModelFieldsNotFound
 from ..common.exceptions import DapModelFilterNotFound
 from ..common.exceptions import DapModelFilterValueErr
@@ -17,11 +17,10 @@ from ..common.exceptions import DapQueryParamErr
 
 class TestBestExt(unittest.TestCase):
     # table_date = datetime.today().strftime('%Y%m%d')
-    table_date = 20200725
+    table_date = 20200817
 
     # 是否把用例结果输出
-    # OUTPUT = True
-    OUTPUT = False
+    OUTPUT = True
 
     # 跳过的用例：跳过原因
     SKIP_CASE = {

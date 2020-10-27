@@ -6,6 +6,7 @@
     - [DAP的一些说明](#dap的一些说明)
 - [原有查询DAP的实现 `dc.py`](#原有查询dap的实现-dcpy)
 - [`dc_orm` 使用说明](#dc_orm-使用说明)
+    - [用测试数据试一下](#用测试数据试一下)
     - [建表 `tables.py`](#建表-tablespy)
     - [查询](#查询)
 - [`dc_orm` 实现说明](#dc_orm-实现说明)
@@ -81,6 +82,13 @@
 > `BBC`上处理dap数据的代码放在 `dc_tools`模块；从名字完全猜不到 `dc_tools` 模块的用途，因为部门以前就叫 `dc`，后来才在代码中了解到 `dc = data center` 数据中心的意思
 
 - `DAP` 使用起来和日常接触到的数据库有很多差异的地方，`dc_orm` 尽量把通用的操作封装起来，提供简单易用的接口供业务层去掉用，`SQL` 操作基本与 `sqlalchemy` 框架保持一致
+
+## 用测试数据试一下
+
+```sh
+export PYTHONPATH=$PYTHONPATH:/path/to/your/dap/source
+python -m dap_orm.test.test_orm
+```
 
 ## 建表 `tables.py`
 
@@ -285,9 +293,9 @@ Field子类可以扩展做字段验证、类型转换、设置默认值等
 
 from abc import ABCMeta, abstractproperty
 
-from ..transformers.converters import IntegerConverter
-from ..transformers.converters import StringConverter
-from ..transformers.converters import DatetimeConverter
+from ..converters.extractors import IntegerConverter
+from ..converters.extractors import StringConverter
+from ..converters.extractors import DatetimeConverter
 
 
 class BaseField(object):
@@ -327,7 +335,7 @@ class IntegerField(BaseField):
 
     @property
     def dap_field(self):
-        return IntegerConverter(self.name).value
+        return IntegerExtractor(self.name).value
 ```
 
 ## 聚合器抽象类 `combiners.py`
@@ -474,7 +482,7 @@ DAP 存储的数据是经过URL编码的，要正常显示需要用提取器进�
 from abc import ABCMeta, abstractproperty
 
 
-class BaseFieldConverter(object):
+class BaseFieldExtractor(object):
     '''字段类型转换器的抽象基类'''
     __metaclass__ = ABCMeta
 
@@ -488,9 +496,9 @@ class BaseFieldConverter(object):
         pass
 
 
-class IntegerConverter(BaseFieldConverter):
+class IntegerExtractor(BaseFieldExtractor):
     def __init__(self, name):
-        super(IntegerConverter, self).__init__(name)
+        super(IntegerExtractor, self).__init__(name)
 
     @property
     def value(self):

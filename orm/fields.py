@@ -13,9 +13,9 @@ Field子类可以扩展做字段验证、类型转换、设置默认值等
 
 from abc import ABCMeta, abstractproperty
 
-from ..transformers.converters import IntegerConverter
-from ..transformers.converters import StringConverter
-from ..transformers.converters import DatetimeConverter
+from ..converters.extractors import IntegerExtractor
+from ..converters.extractors import StringExtractor
+from ..converters.extractors import DatetimeExtractor
 
 
 class BaseField(object):
@@ -55,7 +55,7 @@ class IntegerField(BaseField):
 
     @property
     def dap_field(self):
-        return IntegerConverter(self.name).value
+        return IntegerExtractor(self.name).value
 
 
 class StringField(BaseField):
@@ -64,7 +64,7 @@ class StringField(BaseField):
 
     @property
     def dap_field(self):
-        return StringConverter(self.name).value
+        return StringExtractor(self.name).value
 
 
 class DataTimeFile(BaseField):
@@ -73,4 +73,4 @@ class DataTimeFile(BaseField):
 
     @property
     def dap_field(self):
-        return DatetimeConverter(self.name).value
+        return DatetimeExtractor(self.name).value
