@@ -9,12 +9,11 @@ http://dap.pr.sangfor.org/index.php?s=/2&page_id=70
 http://dap.pr.sangfor.org/index.php?s=/7&page_id=106
 '''
 
-import ast
 from operator import itemgetter
 
 from ..common.log import getLogger
 
-from .dap_utils import DapUtils
+from .dap_query import DapUtils
 from .fields import BaseField
 from ..common.const import DapConfig
 from ..common.const import SqlConfig

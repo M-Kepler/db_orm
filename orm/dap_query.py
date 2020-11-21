@@ -108,6 +108,8 @@ class DapUtils(object):
         query_return = g.query_cache.get(query_token)
         start = (curr_page - 1) * page_size
         end = curr_page * page_size - 1
+        if not query_return:
+            return []
         dap_data = query_return[start:end]
         """
         dap_data = REDIS.zrange(name=query_token,
@@ -115,5 +117,5 @@ class DapUtils(object):
                                 end=curr_page * page_size - 1)
         """
         # 存到 redis 中的json再取出来是这样的: '{u\'event_type\': u\'2\'}' ,没法直接json.loads(xx)
-        # 利用ast.literal_eval做解析json字符串
+        # 利用 ast.literal_eval做解析json字符串
         return [cls(**(ast.literal_eval(x))) for x in dap_data]

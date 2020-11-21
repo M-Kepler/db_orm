@@ -9,7 +9,7 @@ from .exceptions import GetOriginalDataFailed
 
 
 LOG = getLogger(__name__)
-MODULE_NAME = "bbc.dc_tools.common.exception_handler"
+MODULE_NAME = "dap_orm.common.exception_handler"
 
 
 class ExceptionHandler(object):
@@ -27,7 +27,7 @@ class ExceptionHandler(object):
         elif isinstance(ex, DapQueryParamErr):
             msg = _('%s$$dap_query_param_err' % MODULE_NAME)
         elif isinstance(ex, GetOriginalDataFailed):
-            msg = _('%s$$get_original_date_failed' % MODULE_NAME)
+            msg = _('%s$$get_original_data_failed' % MODULE_NAME)
         else:
             LOG.exception("exception_handler not handle error")
             if is_hide_detail:

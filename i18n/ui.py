@@ -1,5 +1,5 @@
 # -*-coding:utf-8-*-
-#!/usr/bin/env python
+# !/usr/bin/env python
 
 from .i18n import Trans
 
@@ -16,5 +16,5 @@ def gettext(*args, **kwargs):
 if __name__ == "__main__":
     print(
         gettext(
-            "bbc.manage.sp_upgrade.exception_handler$$sp_upgrade_config_save_error"
+            "dap_orm.common.exception_handler$$get_original_data_failed"
         ))
