@@ -1,5 +1,9 @@
 #!/usr/bin/bash
 
+# 创建软链
+
+ln -s ~/dap_orm /usr/lib/python2.7/site-packages/dap_orm
+
 CURR_PATH=$(readlink -f "$(dirname "$0")")
 
 # 测试数据所在路径

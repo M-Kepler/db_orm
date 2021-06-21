@@ -2,51 +2,38 @@
 
 - [修订记录](#修订记录)
 - [说明](#说明)
+  - [测试](#测试)
 - [DAP参考](#dap参考)
-    - [DAP的一些说明](#dap的一些说明)
+  - [DAP的一些说明](#dap的一些说明)
 - [原有查询DAP的实现 `dc.py`](#原有查询dap的实现-dcpy)
 - [`dc_orm` 使用说明](#dc_orm-使用说明)
-    - [用测试数据试一下](#用测试数据试一下)
-    - [建表 `tables.py`](#建表-tablespy)
-    - [查询](#查询)
+  - [建表 `tables.py`](#建表-tablespy)
+  - [查询](#查询)
 - [`dc_orm` 实现说明](#dc_orm-实现说明)
-    - [元类 `orm.py`](#元类-ormpy)
-    - [字段抽象类 `fields.py`](#字段抽象类-fieldspy)
-    - [聚合器抽象类 `combiners.py`](#聚合器抽象类-combinerspy)
-    - [过滤器抽象类 `filters.py`](#过滤器抽象类-filterspy)
-    - [提取器抽象类 `converter.py`](#提取器抽象类-converterpy)
-    - [收集器抽象类 `collectors.py`](#收集器抽象类-collectorspy)
+  - [元类 `orm.py`](#元类-ormpy)
+  - [字段抽象类 `fields.py`](#字段抽象类-fieldspy)
+  - [聚合器抽象类 `combiners.py`](#聚合器抽象类-combinerspy)
+  - [过滤器抽象类 `filters.py`](#过滤器抽象类-filterspy)
+  - [提取器抽象类 `converter.py`](#提取器抽象类-converterpy)
+  - [收集器抽象类 `collectors.py`](#收集器抽象类-collectorspy)
 - [`TODO`](#todo)
 - [使用 `DAP` 过程遇到的一些问题](#使用-dap-过程遇到的一些问题)
-    - [功能不支持](#功能不支持)
-    - [文档不全](#文档不全)
+  - [功能不支持](#功能不支持)
+  - [文档不全](#文档不全)
 
 <!-- /TOC -->
 
 # 修订记录
 
-| 作者  | 时间 | 说明 |
-| :- | :- | :- |
-| huangjinjie | 20200718 | 创建说明文档 |
+| 作者        | 时间     | 说明         |
+| :---------- | :------- | :----------- |
+| `huangjinjie` | `20200718` | 创建说明文档 |
 
 # 说明
 
-- 基于 `python2.7`
+## 测试
 
-- 创建软链或把 `dap_orm` 放到 `python` 库路径下
-  ```sh
-  ln -s /root/source/dap_orm /usr/lib/python2.7/site-packages/
-  ```
-
-- 测试:
-  ```sh
-  把测试文件 test/test_data.zip 解压到 /sf/db/dap/log_data/store/bbc/blob
-  mkdir -p /sf/db/dap/log_data/store/bbc/blob
-
-  执行单测文件
-  如果需要把结果返回，则修改 test_orm.py/OUTPUT 为True
-  python -m dap_orm.test.test_orm
-  ```
+- 在 BBC 环境上，把代码下载到 `home` 目录下，进入到 `~/dap_orm/test/` 执行 `test.sh` 即可
 
 # DAP参考
 
@@ -82,13 +69,6 @@
 > `BBC`上处理dap数据的代码放在 `dc_tools`模块；从名字完全猜不到 `dc_tools` 模块的用途，因为部门以前就叫 `dc`，后来才在代码中了解到 `dc = data center` 数据中心的意思
 
 - `DAP` 使用起来和日常接触到的数据库有很多差异的地方，`dc_orm` 尽量把通用的操作封装起来，提供简单易用的接口供业务层去掉用，`SQL` 操作基本与 `sqlalchemy` 框架保持一致
-
-## 用测试数据试一下
-
-```sh
-export PYTHONPATH=$PYTHONPATH:/path/to/your/dap/source
-python -m dap_orm.test.test_orm
-```
 
 ## 建表 `tables.py`
 
@@ -550,12 +530,11 @@ class DateCollector(BaseCollector):
         return '/* COLLECT:collector.date@core */'
 ```
 
-
 # `TODO`
 
 - 目前实现的过滤器、聚合器等的种类比较少，仅满足当前的业务要求，如果后需要继续用 `dc_orm` 来处理存放在 `dap` 数据，需要开发人员自行在以上 `XXX器` 代码中做扩展
 
-- 查询 `dap` 数据的方法是向 `1087` 端口发 `HTTP` 请求；如果后续扩展后表逐渐增多，查询操作很频繁，目前这种简单发 `HTTP` 请求的方式肯定是满足不了的
+- 查询 `dap` 数据的方法是向 `指定` 端口发 `HTTP` 请求；如果后续扩展后表逐渐增多，查询操作很频繁，目前这种简单发 `HTTP` 请求的方式肯定是满足不了的
 
 - 后续最好像 `db_service` 一样，做一个单独的服务，服务前端接受请求，后端调 `orm` 查询
 

@@ -13,6 +13,7 @@ from ..common.exceptions import DapModelFieldsNotFound
 from ..common.exceptions import DapModelFilterNotFound
 from ..common.exceptions import DapModelFilterValueErr
 from ..common.exceptions import DapQueryParamErr
+from ..orm.tables import BestExt
 
 
 class TestBestExt(unittest.TestCase):
@@ -20,7 +21,7 @@ class TestBestExt(unittest.TestCase):
     table_date = 20200817
 
     # 是否把用例结果输出
-    OUTPUT = True
+    OUTPUT = False
 
     # 跳过的用例：跳过原因
     SKIP_CASE = {
@@ -45,24 +46,6 @@ class TestBestExt(unittest.TestCase):
         # 'test_per_page': "测试分页查询",
         # 'test_group_by': "测试group by 语句"
     }
-
-    class BestExt(Model):
-        # Dap数据路径
-        # 指定查询Dap原始数据
-        __table__ = DapConfig.BLOB_ORIGIN_DATA_ROOT.format("bestext")
-        # 指定查询Dap索引数据
-        # __table__ = DapConfig.BLOB_INDEX_ROOT.format("bestext")
-
-        device_id = IntegerField(name="device_id", comment="设备ID")
-        time = StringField(name="time", comment="记录上报时间")
-        event_type = IntegerField(name="event_type", comment="事件类型")
-        occur_time = IntegerField(name="occur_time", comment="线路劣化发生时间")
-        link_id = StringField(name="link_id", comment="线路ID")
-        link_status = StringField(name="link_status", comment="线路状态")
-        detail = StringField(name="detail", comment="线路迁移具体信息")
-        user_name = StringField(name="user_name", comment="线路连接的用户名")
-
-        __sort_by__ = "occur_time"
 
     # 查询条件
     where_args = [
@@ -101,19 +84,19 @@ class TestBestExt(unittest.TestCase):
 
     @unittest_case
     def test_query_with_date_range(self):
-        ret = self.BestExt.query(start_date=20200711, end_date=20200721).all()
+        ret = BestExt.query(start_date=20200711, end_date=20200721).all()
         if self.OUTPUT:
             print(ret)
 
     @unittest_case
     def test_query_with_date(self):
-        ret = self.BestExt.query(tb_date=self.table_date).all()
+        ret = BestExt.query(tb_date=self.table_date).all()
         if self.OUTPUT:
             print(ret)
 
     @unittest_case
     def test_query_without_date(self):
-        ret = self.BestExt.query().all()
+        ret = BestExt.query().all()
         if self.OUTPUT:
             print(ret)
 
@@ -128,7 +111,7 @@ class TestBestExt(unittest.TestCase):
         ]
 
         with self.assertRaises(DapModelFilterValueErr):
-            self.BestExt.query(tb_date=self.table_date).filter(where=where_args).all()
+            BestExt.query(tb_date=self.table_date).filter(where=where_args).all()
 
     @unittest_case
     def test_unknow_field(self):
@@ -141,7 +124,7 @@ class TestBestExt(unittest.TestCase):
         ]
 
         with self.assertRaises(DapModelFieldsNotFound):
-            self.BestExt.query(tb_date=self.table_date).filter(where=where_args).all()
+            BestExt.query(tb_date=self.table_date).filter(where=where_args).all()
 
     @unittest_case
     def test_unknow_filter(self):
@@ -156,11 +139,11 @@ class TestBestExt(unittest.TestCase):
             }
         ]
         with self.assertRaises(DapModelFilterNotFound):
-            self.BestExt.query(tb_date=self.table_date).filter(where=where_args).all()
+            BestExt.query(tb_date=self.table_date).filter(where=where_args).all()
 
     @unittest_case
     def test_filter(self):
-        ret = self.BestExt.query(tb_date=self.table_date).filter(
+        ret = BestExt.query(tb_date=self.table_date).filter(
             where=self.where_args).all()
         if self.OUTPUT:
             for item in ret:
@@ -170,7 +153,7 @@ class TestBestExt(unittest.TestCase):
 
     @unittest_case
     def test_limit(self):
-        ret = self.BestExt.query(tb_date=self.table_date).limit(3).all()
+        ret = BestExt.query(tb_date=self.table_date).limit(3).all()
         if self.OUTPUT:
             for item in ret:
                 for k, v in item.items():
@@ -181,7 +164,7 @@ class TestBestExt(unittest.TestCase):
 
     @unittest_case
     def test_getall(self):
-        ret = self.BestExt.query().all()
+        ret = BestExt.query().all()
         if self.OUTPUT:
             for item in ret:
                 for k, v in item.items():
@@ -190,25 +173,25 @@ class TestBestExt(unittest.TestCase):
 
     @unittest_case
     def test_getfirst(self):
-        ret = self.BestExt.query(tb_date=self.table_date).first()
+        ret = BestExt.query(tb_date=self.table_date).first()
         if self.OUTPUT:
             print(ret)
 
     @unittest_case
     def test_count(self):
-        ret = self.BestExt.query().count()
+        ret = BestExt.query().count()
         if self.OUTPUT:
             print(ret)
 
     @unittest_case
     def test_sum(self):
-        ret = self.BestExt.query(tb_date=self.table_date).sum('device_id')
+        ret = BestExt.query(tb_date=self.table_date).sum('device_id')
         if self.OUTPUT:
             print(ret)
 
     @unittest_case
     def test_order_by(self):
-        ret = self.BestExt.query(
+        ret = BestExt.query(
             tb_date=self.table_date).order_by('occur_time').all()
         # a >= b
         if len(ret) > 2:
@@ -216,7 +199,7 @@ class TestBestExt(unittest.TestCase):
 
     @unittest_case
     def test_unit_query(self):
-        ret = self.BestExt.query(
+        ret = BestExt.query(
             tb_date=self.table_date).limit(1).order_by('occur_time').all()
         if self.OUTPUT:
             print(ret)
@@ -224,31 +207,33 @@ class TestBestExt(unittest.TestCase):
     @unittest_case
     def test_set_unknow_field(self):
         with self.assertRaises(AttributeError):
-            a = self.BestExt()
+            a = BestExt()
             a.device_id2 = 1
 
     @unittest_case
     def test_per_page(self):
-        curr_page = 10
-        page_size = 20
-        # TODO 验证一下数据正确性
-        ret, total = self.BestExt.query().offset(curr_page=curr_page,
-                                                 page_size=page_size)
-        print(total)
-        print(len(ret))
-        if self.OUTPUT:
-            print(ret)
+        curr_page = 1
+        page_size = 2
+        mdd_path = None
+        mdd_path, first_page_result = BestExt.query().limit(page_size).offset(
+            page_num=curr_page, mdd_path=mdd_path)
+        for item in first_page_result['data']:
+            print(BestExt._format_dap_item(item))
+
+        mdd_path, second_page_result = BestExt.query().limit(page_size).offset(
+            page_num=curr_page + 1, mdd_path=mdd_path)
+        for item in second_page_result['data']:
+            print(BestExt._format_dap_item(item))
 
     @unittest_case
     def test_group_by(self):
-        ret = self.BestExt.query().group_by('device_id', 'occur_time').all()
+        ret = BestExt.query().group_by('device_id', 'occur_time').all()
         if self.OUTPUT:
             print(ret)
 
     @unittest_case
     def test_order_by_desc(self):
-        # TODO
-        ret = self.BestExt.query(
+        ret = BestExt.query(
             tb_date=self.table_date).order_by('occur_time').desc()
         if self.OUTPUT:
             print(ret)
@@ -256,7 +241,7 @@ class TestBestExt(unittest.TestCase):
 
     @unittest_case
     def test_order_by_asc(self):
-        ret = self.BestExt.query(
+        ret = BestExt.query(
             tb_date=self.table_date
         ).order_by(
             field='occur_time'
@@ -267,7 +252,7 @@ class TestBestExt(unittest.TestCase):
     @unittest_case
     def test_query_param_err(self):
         with self.assertRaises(DapQueryParamErr):
-            self.BestExt.query(tb_date=self.table_date).desc()
+            BestExt.query(tb_date=self.table_date).desc()
 
 
 if __name__ == "__main__":

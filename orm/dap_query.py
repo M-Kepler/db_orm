@@ -1,14 +1,10 @@
 # -*-coding:utf-8-*-
 
-import ast
+import os
 import json
-import uuid
 import requests
 
 from ..common.log import getLogger
-from ..common.globals import g
-# from bbc.redis_tools.common import REDIS
-# from bbc.redis_tools.common import PIPE
 from ..common.const import DapConfig
 from ..common.exceptions import GetOriginalDataFailed
 
@@ -20,18 +16,41 @@ class DapUtils(object):
         pass
 
     @classmethod
-    def do_query(cls, http_param):
+    def clear_dap_query_cache(cls, sid):
+        """
+        清理 dap 查询过程中的缓存文件，以免频繁查询堆积大量垃圾文件
+
+        临时文件目录如下：
+        /sf/db/dap/log_data/_mapreduce/temp/sql/597/61b01906c39940ec962ba379008f8b2b
+            12673/  J1/  progress/
+        # 查询完把 /sf/db/dap/log_data/_mapreduce/temp/sql/597 目录删掉
+
+        :param sid dap 查询ID
+        """
+        try:
+            if not sid:
+                return
+            for root, _, _ in os.walk(DapConfig.SQL_TEMP_DIR):
+                if root.endswith(sid):
+                    rm_as_root(os.path.dirname(root))
+                    break
+        except Exception as ex:
+            LOG.debug("delete dap query cache dir %s failed: %s" % (sid, ex))
+
+    @classmethod
+    def do_query(cls, query_param, clear_cache=True):
         """
         :desc
             向 dap 的 restful 查询接口发请求，获取数据
             完成向DAP查询的操作
-        :param params
+        :param query_param
             查询参数，格式为
             {
                 "op": "t_sql",
                 "table": ...,
                 "sql": ...,
-                "app": ...
+                "app": ...,
+                "sid": 指定SQL查询的ID，通过此ID可以跟踪查询进度或者取消查询
             }
             组装的查询语句如下：
             select i(event_type) event_type,
@@ -43,13 +62,15 @@ class DapUtils(object):
                    i(device_id) device_id
             from 20200710
             where (event_type=1) and (device_id=5)'
+        :param clear_cache 是否清空查询缓存
+               t_list 分页查询模式下，需要保留缓存文件供分页
         :return
             查询到的数据，失败则抛异常 GetOriginalDataFailed
         """
-        # LOG.debug("dap query param:[%s]" % http_param)
+        # LOG.debug("dap query param:[%s]" % query_param)
 
         try:
-            resp = requests.post(DapConfig.ENTRY, params=http_param)
+            resp = requests.post(DapConfig.ENTRY, params=query_param)
             if resp.status_code >= 400:
                 LOG.error("Request [%s:%s] failed: %s" %
                           ("POST", DapConfig.ENTRY, resp.content))
@@ -62,60 +83,6 @@ class DapUtils(object):
         except Exception as ex:
             LOG.exception(ex)
             raise GetOriginalDataFailed()
-
-    @classmethod
-    def cache_query_ret(cls, dap_data, sorted_by=None):
-        '''
-        :desc
-            查询结果根据 cls.__sort_by__ 字段排序后存储到redis中
-        :param dap_data
-            查询到的数据列表，列表元素是Model子类
-        :return cls.query_token
-            随机ID，把查询结果存储到redis中，指定生命周期，做分也是直接从redis中取
-            目的是为了保证分页查询的结果正确性
-            比如原有10条数据，按occur_time排序后存储到redis中:(a0, a1, a2, a3, a4.... a9)
-            在完成查询与取分页之间又上报了5条数据，其中有一条数据时间较小，则原始数据为
-            (a0, a111, a1, a2...a14)，此时再取分页就会取到错误的数据a111
-            所以，用redis暂存本次查询的结果
-        '''
-        if not dap_data:
-            query_token = ''
-            return
-        query_token = str(uuid.uuid4())
-        LOG.debug(query_token)
-        # 对查询到的数据先做排序，再存到redis中
-        # FIXME
-        g.query_cache[query_token] = dap_data
-        """
-        for item in dap_data:
-            score = item.get(sorted_by, 0)
-            PIPE.zadd(query_token, score, item)
-        PIPE.expire(query_token, DapConfig.REDIS_QUERY_RET_TTL)
-        PIPE.execute()
-        """
-        return query_token
-
-    @classmethod
-    def get_split_data(cls, query_token, curr_page, page_size):
-        '''
-        :desc 对数据做分页，获取分页数据
-        :param query_token 根据该token获取此次分页操作的查询结果
-        :param curr_page 当前页索引
-        :param page_size 每页大小
-        :return
-            返回该页的数据
-        '''
-        query_return = g.query_cache.get(query_token)
-        start = (curr_page - 1) * page_size
-        end = curr_page * page_size - 1
-        if not query_return:
-            return []
-        dap_data = query_return[start:end]
-        """
-        dap_data = REDIS.zrange(name=query_token,
-                                start=(curr_page - 1) * page_size,
-                                end=curr_page * page_size - 1)
-        """
-        # 存到 redis 中的json再取出来是这样的: '{u\'event_type\': u\'2\'}' ,没法直接json.loads(xx)
-        # 利用 ast.literal_eval做解析json字符串
-        return [cls(**(ast.literal_eval(x))) for x in dap_data]
+        finally:
+            if clear_cache:
+                cls.clear_dap_query_cache(sid=query_param.get('sid'))

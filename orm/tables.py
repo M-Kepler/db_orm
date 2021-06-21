@@ -46,7 +46,27 @@ class BestExt(Model):
     link_status = StringField(name="link_status", comment="线路状态")
     detail = StringField(name="detail", comment="线路迁移具体信息")
     user_name = StringField(name="user_name", comment="线路连接的用户名")
+    server_name = StringField(name="server_name", comment="线路连接的总部名称")
 
     # 指定默认排序字段
     __sort_by__ = "occur_time"
     # __sort_by__ = "occur_time, link_id"
+
+    @classmethod
+    def _format_dap_item(cls, dap_data):
+        """
+        查询dap时，如果指定 t_list 查询方式，则结果集只有字段内容，没有字段名
+        orm.py 框架已经指定查询次序按字段排序，所以这里组装一下数据
+        """
+        return cls(**{
+            "detail": dap_data[1],
+            "device_id": dap_data[2],
+            "event_type": dap_data[3],
+            "link_id": dap_data[4],
+            "link_status": dap_data[5],
+            "occur_time": dap_data[6],
+            "server_name": dap_data[7],
+            "time": dap_data[8],
+            "update_time": dap_data[9],
+            "user_name": dap_data[10]
+        })

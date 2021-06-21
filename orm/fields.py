@@ -19,19 +19,20 @@ from ..converters.extractors import DatetimeExtractor
 
 
 class BaseField(object):
-    '''字段类型的抽象基类
-       定义了抽象属性dap_field，子类必须实现该方法
-    '''
+    """
+    字段类型的抽象基类
+    定义了抽象属性dap_field，子类必须实现该方法
+    """
 
     __metaclass__ = ABCMeta
 
     def __init__(self, name, column_type, default, comment):
-        '''
+        """
         :param name 字段名
         :param column_type 字段类型
         :param default 默认值
         :param comment 字段说明
-        '''
+        """
         self.name = name
         self.column_type = column_type
         self.default = default
