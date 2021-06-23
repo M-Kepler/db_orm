@@ -1,6 +1,4 @@
-#-*-coding:utf-8-*-
-''' bbc补丁包为了尽量不与原有代码产生冲突，减少合并工作量，所以国际化操作临时放在这里
-'''
+# -*-coding:utf-8-*-
 
 import os
 import gettext

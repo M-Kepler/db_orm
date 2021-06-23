@@ -16,5 +16,5 @@ def gettext(*args, **kwargs):
 if __name__ == "__main__":
     print(
         gettext(
-            "dap_orm.common.exception_handler$$get_original_data_failed"
+            "db_orm.common.exception_handler$$get_original_data_failed"
         ))

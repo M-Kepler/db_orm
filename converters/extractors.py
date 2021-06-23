@@ -1,26 +1,30 @@
 # -*-coding:utf-8-*-
-'''
-字段提取器
-DAP 存储的数据是经过URL编码的，要正常显示需要用提取器进行处理
+
+"""
+Author       : M_Kepler
+EMail        : m_kepler@foxmail.com
+Last modified: 2021-06-12 12:11:15
+Filename     : extractors.py
+Description  : 字段提取器
+DB 存储的数据是经过URL编码的，要正常显示需要用提取器进行处理
 
 - 原始sql:
     select event_type, occur_time from tb_name
 
-- DAP的sql
+- DB的sql
     > 需要对字段套上提取器做解码才能正常显示值
     > 提取器之后的值 event_type 不一定要是字段值，为了避免歧义, 仍然使用字段值表示
     select i(event_type) event_type, s(occur_time) occur_time from tb_name
-
-- 对应DAP 文档:
-    http://dap.pr.sangfor.org/index.php?s=/2&page_id=70
-'''
-
+"""
 
 from abc import ABCMeta, abstractproperty
 
 
 class BaseFieldExtractor(object):
-    '''字段类型转换器的抽象基类'''
+    """
+    字段类型转换器的抽象基类
+    """
+
     __metaclass__ = ABCMeta
 
     def __init__(self, name):
@@ -28,8 +32,10 @@ class BaseFieldExtractor(object):
 
     @abstractproperty
     def value(self):
-        '''限制子类必须实现该抽象属性来按照DAP提取器来做类型转换
-        DAP提取器
+        """
+        限制子类必须实现该抽象属性来按照DB提取器来做类型转换
+
+        DB提取器
         函数            描述                                   SQL举例
         file            获取文件名，可指定分隔符                select file(name, 'u') nid from report
         dir             获取目录名，可指定分隔符                select dir(name, '.') name from report
@@ -45,7 +51,7 @@ class BaseFieldExtractor(object):
         f               标记字段值为64位浮点数                 select f(score) score from report
         s               标记字段值为字符串                     select s(name) name from report
         b               标记字段值为二进制                     select b(score) score from report
-        '''
+        """
         pass
 
 

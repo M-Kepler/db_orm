@@ -1,14 +1,17 @@
-msgid "common$$internal_server_error"
+msgid "unknow_exception"
 msgstr "系统内部错误"
 
-msgid "dap_orm.common.exception_handler$$dap_module_fields_not_found"
+msgid "db_orm.common.exception_handler$$db_module_fields_not_found"
 msgstr "表 %(table)s 不存在 %(fields)s 字段"
 
-msgid "dap_orm.common.exception_handler$$dap_module_filter_not_found"
-msgstr "未知的DAP查询过滤器：%(filter)s"
+msgid "db_orm.common.exception_handler$$db_module_filter_not_found"
+msgstr "未知的DB查询过滤器：%(filter)s"
 
-msgid "dap_orm.common.exception_handler$$dap_query_param_err"
-msgstr "查询DAP的SQL语句参数错误"
+msgid "db_orm.common.exception_handler$$db_query_param_err"
+msgstr "查询DB的SQL语句参数错误"
 
-msgid "dap_orm.common.exception_handler$$get_original_data_failed"
-msgstr "获取 DAP 原始数据失败"
+msgid "db_orm.common.exception_handler$$db_module_filter_value_err"
+msgstr "查询过滤器参数错误"
+
+msgid "db_orm.common.exception_handler$$get_original_data_failed"
+msgstr "获取 DB 原始数据失败"

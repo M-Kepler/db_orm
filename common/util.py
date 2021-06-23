@@ -15,6 +15,7 @@ LOG = getLogger(__name__)
 def unique_id():
     """
     生成一个任意的ID，用作查询时候的query_id。
+
     :return: 随机生成的ID。
     """
 
@@ -24,6 +25,7 @@ def unique_id():
 def today():
     """
     返回今天的日期字符串，YYYYmmdd的形式。
+
     :return: 今天的日期，以字符串形式。
     """
     return datetime.date.today().strftime('%Y%m%d')
@@ -32,14 +34,17 @@ def today():
 def yesterday():
     """
     返回昨天的日期字符串，YYYYmmdd的形式。
+
     :return: 今天的日期，以字符串形式。
     """
-    return (datetime.date.today() - datetime.timedelta(days=1)).strftime('%Y%m%d')
+    return (datetime.date.today() -
+            datetime.timedelta(days=1)).strftime('%Y%m%d')
 
 
 def yesterday_nowtime():
     """
     返回24小时之前的时间戳
+
     :return: 24小时之前的时间戳
     """
     return int(time.time()) - 3600 * 24
@@ -47,7 +52,8 @@ def yesterday_nowtime():
 
 def convert_date_fmt_dc(d):
     """
-    将日期格式转换为能为DAP所用。
+    将日期格式转换为能为DB所用。
+
     :param d: 日期。
     :return: 转换后的结果，字符串形式。
     """
@@ -57,6 +63,7 @@ def convert_date_fmt_dc(d):
 def url_json_decode(raw_data):
     """
     对原生数据进行url解码后再进行Json反序列化.
+
     :param raw_data: 原始查询结果.
     :return: 解码后的数据.
     """
@@ -74,15 +81,17 @@ def url_json_decode(raw_data):
 def minutes_before_now(n=10):
     """
     返回若干分钟之前的时间戳
+
     :param n: 分钟数
     :return: 时间戳
     """
-    return int(time.time()) - n*60
+    return int(time.time()) - n * 60
 
 
 def walk_date(start, end):
     """
     对start_date到end_date之间的日期进行遍历,返回便利结果所组成的list
+
     :param start: 起始日期
     :param end: 终止日期
     :return: 日期列表
@@ -105,10 +114,11 @@ def walk_date(start, end):
 def write_temp_file(content):
     """
     由系统随机生成一个文件（文件名不会和已有文件重复），写入指定内容到文件中，返回文件名。
+
     :param content: 文件内容。
     :return: 随机生成的文件名。
     """
     with NamedTemporaryFile('w+', delete=False) as f:
         f.write(content)
-        LOG.debug('dap param file content : %s' % str(content))
+        LOG.debug('db param file content : %s' % str(content))
         return f.name
